@@ -1,25 +1,24 @@
 import mmh3
 
 def hash_token(token):
-    """Hash a token using MurmurHash3 and return a 64-bit integer."""
-    h = mmh3.hash64(token)[0]
+    h = mmh3.hash128(token)
     bits = []
-    for i in range(64):
+    for i in range(128):
         bit = (h >> i) & 1
         bits.append(1 if bit else -1)
     return bits
 
 def compute_simhash(tokens):
-    """Compute the SimHash for a list of tokens."""
-    v = [0] * 64
+    v = [0] * 128
     for token in tokens:
         token_bits = hash_token(token)
-        for i in range(64):
+        for i in range(128):
             v[i] += token_bits[i]
     
     fingerprint = 0
-    for i in range(64):
+    for i in range(128):
         if v[i] > 0:
-            fingerprint |= (1 << i)
+            fingerprint = fingerprint | (1 << i)
     
     return fingerprint
+
